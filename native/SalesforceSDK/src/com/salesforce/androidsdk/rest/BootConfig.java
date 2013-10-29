@@ -27,6 +27,7 @@
 package com.salesforce.androidsdk.rest;
 
 import java.io.IOException;
+import java.util.Map;
 import java.util.Scanner;
 
 import org.json.JSONArray;
@@ -48,14 +49,14 @@ public class BootConfig {
     private static final String HYBRID_BOOTCONFIG_PATH = "www/bootconfig.json";
 
     // bootconfig.json should contain a map with the following keys.
-    private static final String REMOTE_ACCESS_CONSUMER_KEY = "remoteAccessConsumerKey";
-    private static final String OAUTH_REDIRECT_URI = "oauthRedirectURI";
-    private static final String OAUTH_SCOPES = "oauthScopes";
-    private static final String IS_LOCAL = "isLocal";
-    private static final String START_PAGE = "startPage";
-    private static final String ERROR_PAGE = "errorPage";
-    private static final String SHOULD_AUTHENTICATE = "shouldAuthenticate";
-    private static final String ATTEMPT_OFFLINE_LOAD = "attemptOfflineLoad";
+    public static final String REMOTE_ACCESS_CONSUMER_KEY = "remoteAccessConsumerKey";
+    public static final String OAUTH_REDIRECT_URI = "oauthRedirectURI";
+    public static final String OAUTH_SCOPES = "oauthScopes";
+    public static final String IS_LOCAL = "isLocal";
+    public static final String START_PAGE = "startPage";
+    public static final String ERROR_PAGE = "errorPage";
+    public static final String SHOULD_AUTHENTICATE = "shouldAuthenticate";
+    public static final String ATTEMPT_OFFLINE_LOAD = "attemptOfflineLoad";
 
     // Default for optional configs.
     private static final boolean DEFAULT_SHOULD_AUTHENTICATE = true;
@@ -70,6 +71,7 @@ public class BootConfig {
     private boolean shouldAuthenticate;
     private boolean attemptOfflineLoad;
 
+    private static Map<String, String> configMap = null;
     private static BootConfig INSTANCE = null;
 
     /**
@@ -84,11 +86,17 @@ public class BootConfig {
             INSTANCE = new BootConfig();
             if (SalesforceSDKManager.getInstance().isHybrid()) {
                 INSTANCE.readFromJSON(ctx);
+            } else if (null != configMap) {
+                INSTANCE.readFromMap(ctx);
             } else {
                 INSTANCE.readFromXML(ctx);
             }
         }
         return INSTANCE;
+    }
+
+    private void readFromMap(Context ctx) {
+        // FIXME
     }
 
     /**
@@ -251,5 +259,9 @@ public class BootConfig {
         public BootConfigException(String msg, Throwable cause) {
             super(msg, cause);
         }
+    }
+
+    public static void setConfigMap(Map<String, String> newConfigMap) {
+        configMap = newConfigMap;
     }
 }
