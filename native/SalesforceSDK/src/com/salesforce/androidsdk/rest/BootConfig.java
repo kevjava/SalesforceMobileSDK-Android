@@ -49,14 +49,15 @@ public class BootConfig {
     private static final String HYBRID_BOOTCONFIG_PATH = "www/bootconfig.json";
 
     // bootconfig.json should contain a map with the following keys.
-    public static final String REMOTE_ACCESS_CONSUMER_KEY = "remoteAccessConsumerKey";
-    public static final String OAUTH_REDIRECT_URI = "oauthRedirectURI";
-    public static final String OAUTH_SCOPES = "oauthScopes";
-    public static final String IS_LOCAL = "isLocal";
-    public static final String START_PAGE = "startPage";
-    public static final String ERROR_PAGE = "errorPage";
-    public static final String SHOULD_AUTHENTICATE = "shouldAuthenticate";
-    public static final String ATTEMPT_OFFLINE_LOAD = "attemptOfflineLoad";
+    private static final String REMOTE_ACCESS_CONSUMER_KEY = "remoteAccessConsumerKey";
+    private static final String OAUTH_REDIRECT_URI = "oauthRedirectURI";
+    private static final String OAUTH_SCOPES = "oauthScopes";
+    private static final String IS_LOCAL = "isLocal";
+    private static final String START_PAGE = "startPage";
+    private static final String ERROR_PAGE = "errorPage";
+    private static final String SHOULD_AUTHENTICATE = "shouldAuthenticate";
+    private static final String ATTEMPT_OFFLINE_LOAD = "attemptOfflineLoad";
+    private static final String PUSH_NOTIFICATION_CLIENT_ID = "androidPushNotificationClientId";
 
     // Default for optional configs.
     private static final boolean DEFAULT_SHOULD_AUTHENTICATE = true;
@@ -70,6 +71,7 @@ public class BootConfig {
     private String errorPage;
     private boolean shouldAuthenticate;
     private boolean attemptOfflineLoad;
+    private String pushNotificationClientId;
 
     private static Map<String, String> configMap = null;
     private static BootConfig INSTANCE = null;
@@ -95,12 +97,6 @@ public class BootConfig {
         return INSTANCE;
     }
 
-    private void readFromMap(Context ctx) {
-        remoteAccessConsumerKey = configMap.get(REMOTE_ACCESS_CONSUMER_KEY);
-        oauthRedirectURI = configMap.get(OAUTH_REDIRECT_URI);
-        oauthScopes = new String[] {}; // configMap.get(OAUTH_SCOPES).split(",");
-    }
-
     /**
      * Initializes this BootConfig object by reading the content of bootconfig.json.
      * 
@@ -123,6 +119,19 @@ public class BootConfig {
         remoteAccessConsumerKey = res.getString(R.string.remoteAccessConsumerKey);
         oauthRedirectURI = res.getString(R.string.oauthRedirectURI);
         oauthScopes = res.getStringArray(R.array.oauthScopes);
+        pushNotificationClientId = res.getString(R.string.androidPushNotificationClientId);
+    }
+
+    /**
+     * Reads the configuration data from the passed-in Map instead of from the resource XML file.
+     * 
+     * @param ctx
+     *            Context.
+     */
+    private void readFromMap(Context ctx) {
+        remoteAccessConsumerKey = configMap.get(REMOTE_ACCESS_CONSUMER_KEY);
+        oauthRedirectURI = configMap.get(OAUTH_REDIRECT_URI);
+        oauthScopes = new String[] {}; // configMap.get(OAUTH_SCOPES).split(",");
     }
 
     /**
@@ -172,6 +181,7 @@ public class BootConfig {
             errorPage = config.getString(ERROR_PAGE);
 
             // Optional fields.
+            pushNotificationClientId = config.optString(PUSH_NOTIFICATION_CLIENT_ID);
             shouldAuthenticate = config.optBoolean(SHOULD_AUTHENTICATE, DEFAULT_SHOULD_AUTHENTICATE);
             attemptOfflineLoad = config.optBoolean(ATTEMPT_OFFLINE_LOAD, DEFAULT_ATTEMPT_OFFLINE_LOAD);
         } catch (JSONException e) {
@@ -252,6 +262,15 @@ public class BootConfig {
     }
 
     /**
+     * Returns the push notification client ID.
+     * 
+     * @return Push notification client ID.
+     */
+    public String getPushNotificationClientId() {
+        return pushNotificationClientId;
+    }
+
+    /**
      * Exception thrown for all bootconfig parsing errors.
      */
     static public class BootConfigException extends RuntimeException {
@@ -263,6 +282,12 @@ public class BootConfig {
         }
     }
 
+    /**
+     * Sets the configuration map to be used instead of reading from the XML file.
+     * 
+     * @param newConfigMap
+     *            the configuration map to be used.
+     */
     public static void setConfigMap(Map<String, String> newConfigMap) {
         configMap = newConfigMap;
     }
