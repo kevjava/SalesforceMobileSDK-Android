@@ -49,15 +49,15 @@ public class BootConfig {
     private static final String HYBRID_BOOTCONFIG_PATH = "www/bootconfig.json";
 
     // bootconfig.json should contain a map with the following keys.
-    private static final String REMOTE_ACCESS_CONSUMER_KEY = "remoteAccessConsumerKey";
-    private static final String OAUTH_REDIRECT_URI = "oauthRedirectURI";
-    private static final String OAUTH_SCOPES = "oauthScopes";
-    private static final String IS_LOCAL = "isLocal";
-    private static final String START_PAGE = "startPage";
-    private static final String ERROR_PAGE = "errorPage";
-    private static final String SHOULD_AUTHENTICATE = "shouldAuthenticate";
-    private static final String ATTEMPT_OFFLINE_LOAD = "attemptOfflineLoad";
-    private static final String PUSH_NOTIFICATION_CLIENT_ID = "androidPushNotificationClientId";
+    public static final String REMOTE_ACCESS_CONSUMER_KEY = "remoteAccessConsumerKey";
+    public static final String OAUTH_REDIRECT_URI = "oauthRedirectURI";
+    public static final String OAUTH_SCOPES = "oauthScopes";
+    public static final String IS_LOCAL = "isLocal";
+    public static final String START_PAGE = "startPage";
+    public static final String ERROR_PAGE = "errorPage";
+    public static final String SHOULD_AUTHENTICATE = "shouldAuthenticate";
+    public static final String ATTEMPT_OFFLINE_LOAD = "attemptOfflineLoad";
+    public static final String PUSH_NOTIFICATION_CLIENT_ID = "androidPushNotificationClientId";
 
     // Default for optional configs.
     private static final boolean DEFAULT_SHOULD_AUTHENTICATE = true;
