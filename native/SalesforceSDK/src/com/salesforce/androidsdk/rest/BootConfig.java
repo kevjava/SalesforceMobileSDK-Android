@@ -96,7 +96,9 @@ public class BootConfig {
     }
 
     private void readFromMap(Context ctx) {
-        // FIXME
+        remoteAccessConsumerKey = configMap.get(REMOTE_ACCESS_CONSUMER_KEY);
+        oauthRedirectURI = configMap.get(OAUTH_REDIRECT_URI);
+        oauthScopes = new String[] {}; // configMap.get(OAUTH_SCOPES).split(",");
     }
 
     /**

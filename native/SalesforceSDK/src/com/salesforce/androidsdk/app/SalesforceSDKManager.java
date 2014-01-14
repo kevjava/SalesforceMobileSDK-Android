@@ -369,7 +369,7 @@ public class SalesforceSDKManager implements AccountRemoved {
      * @return True - if the SDK should automatically logout, False - otherwise.
      */
     public boolean shouldLogoutWhenTokenRevoked() {
-        return true;
+        return false;
     }
 
     /**
