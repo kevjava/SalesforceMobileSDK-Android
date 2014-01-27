@@ -27,7 +27,10 @@
 package com.salesforce.androidsdk.rest;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
+import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.HttpStatus;
@@ -40,146 +43,162 @@ import org.json.JSONObject;
 
 import com.android.volley.NetworkResponse;
 
-
 /**
  * RestResponse: Class to represent any REST response.
  * 
  */
 public class RestResponse {
-	
-	private final int statusCode;
-	private final HttpResponse response;
 
-	// Populated when "consume" is called
-	private byte[] responseAsBytes;
-	private String responseCharSet;
-	
-	// Lazily computed
-	private String responseAsString;
-	private JSONObject responseAsJSONObject;
-	private JSONArray responseAsJSONArray;
+    private final int statusCode;
+    private final HttpResponse response;
 
-	/**
-	 * Constructor
-	 * @param response
-	 */
-	public RestResponse(HttpResponse response) {
-		this.response = response;
-		this.statusCode = response.getStatusLine().getStatusCode();
-	}
-	
-	/**
-	 * Constructor
-	 * @param response
-	 */
-	public RestResponse(NetworkResponse response) {
-		this.response = null;
-		this.statusCode = response.statusCode;
-		this.responseAsBytes = response.data;
-				
-	}
-	
-	/**
-	 * @return HTTP status code of the response
-	 */
-	public int getStatusCode() {
-		return statusCode; 
-	}
-	
-	/**
-	 * @return the base HTTP response of the response. The can be useful for response that are not JSON, such as binary payloads.
-	 */
-	/**
-	 * @return true for response with 2xx status codes
-	 */
-	public boolean isSuccess() {
-		// 2xx success
-		return (statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES);	
-	}
-	
-	/**
-	 * Fully consume response entity content and closes content stream
-	 * Must be called before returning control to the UI thread
-	 * @throws IOException 
-	 */
-	public void consume() throws IOException {
-		if (responseAsBytes != null) {
-			// already consumed
-			return;			
-		}
-		
-		HttpEntity entity = response.getEntity();
-		if (entity != null) {
-			responseCharSet = EntityUtils.getContentCharSet(entity);		
-			responseAsBytes = EntityUtils.toByteArray(entity);
-		}
-		else {
-			responseAsBytes = new byte[0];
-		}
-	}
+    // Populated when "consume" is called
+    private byte[] responseAsBytes;
+    private String responseCharSet;
 
-	/**
-	 * @return byte[] for entire response
-	 * @throws IOException
-	 */
-	public byte[] asBytes() throws IOException {
-		if (responseAsBytes == null) {
-			consume();
-		}
-		return responseAsBytes;
-	}	
-	
-	/**
-	 * String is built the first time the method is called.
-	 * 
-	 * @return string for entire response
-	 * @throws ParseException
-	 * @throws IOException
-	 */
-	public String asString() throws ParseException, IOException {
-		if (responseAsString == null) {
-			responseAsString = new String(asBytes(), (responseCharSet == null ? HTTP.UTF_8 : responseCharSet));
-		}
-		return responseAsString;
-	}
-	
-	/**
-	 * JSONObject is built the first time the method is called.
-	 * 
-	 * @return JSONObject for response
-	 * @throws ParseException
-	 * @throws JSONException
-	 * @throws IOException
-	 */
-	public JSONObject asJSONObject() throws ParseException, JSONException, IOException {
-		if (responseAsJSONObject == null) {
-			responseAsJSONObject = new JSONObject(asString());
-		}
-		return responseAsJSONObject;
-	}
+    // Lazily computed
+    private String responseAsString;
+    private JSONObject responseAsJSONObject;
+    private JSONArray responseAsJSONArray;
 
-	/**
-	 * JSONArray is built the first time the method is called.
-	 * 
-	 * @return JSONObject for response
-	 * @throws ParseException
-	 * @throws JSONException
-	 * @throws IOException
-	 */
-	public JSONArray asJSONArray() throws ParseException, JSONException, IOException {
-		if (responseAsJSONArray == null) {
-			responseAsJSONArray = new JSONArray(asString());
-		}
-		return responseAsJSONArray;
-	}
-	
-	
-	@Override
-	public String toString() {
-		try {
-			return asString();
-		} catch (Exception e) {
-			return response.toString();
-		}
-	}
+    /**
+     * Constructor
+     * 
+     * @param response
+     */
+    public RestResponse(HttpResponse response) {
+        this.response = response;
+        this.statusCode = response.getStatusLine().getStatusCode();
+    }
+
+    /**
+     * Constructor
+     * 
+     * @param response
+     */
+    public RestResponse(NetworkResponse response) {
+        this.response = null;
+        this.statusCode = response.statusCode;
+        this.responseAsBytes = response.data;
+
+    }
+
+    /**
+     * @return HTTP status code of the response
+     */
+    public int getStatusCode() {
+        return statusCode;
+    }
+
+    /**
+     * @return the base HTTP response of the response. The can be useful for response that are not JSON, such as binary
+     *         payloads.
+     */
+    /**
+     * @return true for response with 2xx status codes
+     */
+    public boolean isSuccess() {
+        // 2xx success
+        return (statusCode >= HttpStatus.SC_OK && statusCode < HttpStatus.SC_MULTIPLE_CHOICES);
+    }
+
+    /**
+     * Fully consume response entity content and closes content stream Must be called before returning control to the UI
+     * thread
+     * 
+     * @throws IOException
+     */
+    public void consume() throws IOException {
+        if (responseAsBytes != null) {
+            // already consumed
+            return;
+        }
+
+        HttpEntity entity = response.getEntity();
+        if (entity != null) {
+            responseCharSet = EntityUtils.getContentCharSet(entity);
+            responseAsBytes = EntityUtils.toByteArray(entity);
+        } else {
+            responseAsBytes = new byte[0];
+        }
+    }
+
+    /**
+     * @return byte[] for entire response
+     * @throws IOException
+     */
+    public byte[] asBytes() throws IOException {
+        if (responseAsBytes == null) {
+            consume();
+        }
+        return responseAsBytes;
+    }
+
+    /**
+     * String is built the first time the method is called.
+     * 
+     * @return string for entire response
+     * @throws ParseException
+     * @throws IOException
+     */
+    public String asString() throws ParseException, IOException {
+        if (responseAsString == null) {
+            responseAsString = new String(asBytes(), (responseCharSet == null ? HTTP.UTF_8 : responseCharSet));
+        }
+        return responseAsString;
+    }
+
+    /**
+     * JSONObject is built the first time the method is called.
+     * 
+     * @return JSONObject for response
+     * @throws ParseException
+     * @throws JSONException
+     * @throws IOException
+     */
+    public JSONObject asJSONObject() throws ParseException, JSONException, IOException {
+        if (responseAsJSONObject == null) {
+            responseAsJSONObject = new JSONObject(asString());
+        }
+        return responseAsJSONObject;
+    }
+
+    /**
+     * JSONArray is built the first time the method is called.
+     * 
+     * @return JSONObject for response
+     * @throws ParseException
+     * @throws JSONException
+     * @throws IOException
+     */
+    public JSONArray asJSONArray() throws ParseException, JSONException, IOException {
+        if (responseAsJSONArray == null) {
+            responseAsJSONArray = new JSONArray(asString());
+        }
+        return responseAsJSONArray;
+    }
+
+    @Override
+    public String toString() {
+        try {
+            return asString();
+        } catch (Exception e) {
+            return response.toString();
+        }
+    }
+
+    /**
+     * Added to support RW's image and download authentication through a Salesforce datasource.
+     * 
+     * @return a map of header names and values present in the HTTP response coming from the Salesforce server.
+     */
+    public Map<String, String> getHeaders() {
+        Map<String, String> headers = new HashMap<String, String>();
+
+        for (Header header : response.getAllHeaders()) {
+            headers.put(header.getName(), header.getValue());
+        }
+
+        return headers;
+    }
 }
